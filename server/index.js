@@ -14,7 +14,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-vercel-domain.vercel.app' 
+    ? 'https://trading-journel-backend.vercel.app' // Your actual Vercel URL
     : 'http://localhost:5173',
   credentials: true
 }));
