@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -42,9 +42,7 @@ export default function FundingAccounts() {
 
   const fetchAccounts = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/funding-accounts",
-      );
+      const response = await api.get("/funding-accounts");
       setAccounts(response.data);
     } catch (error) {
       toast.error("Failed to load accounts");
@@ -431,7 +429,7 @@ function CreateAccountForm({ onClose, onCreated }) {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/funding-accounts", form);
+      await api.post("/funding-accounts", form);
       toast.success("Account created successfully!");
       onCreated();
     } catch (error) {

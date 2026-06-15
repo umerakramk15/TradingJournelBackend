@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 export default function TradeHistory() {
@@ -39,9 +39,7 @@ export default function TradeHistory() {
       params.append("page", pagination.currentPage);
       params.append("limit", 20);
 
-      const response = await axios.get(
-        `http://localhost:5000/api/trades?${params}`,
-      );
+      const response = await api.get(`/trades?${params}`);
       setTrades(response.data.trades);
       setPagination(response.data.pagination);
     } catch (error) {
@@ -53,12 +51,9 @@ export default function TradeHistory() {
 
   const exportCSV = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/trades/export/csv",
-        {
-          responseType: "blob",
-        },
-      );
+      const response = await api.get("/trades/export/csv", {
+        responseType: "blob",
+      });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -83,7 +78,7 @@ export default function TradeHistory() {
     )
       return;
     try {
-      await axios.delete(`http://localhost:5000/api/trades/${id}`);
+      await api.delete(`/trades/${id}`);
       toast.success("Trade deleted successfully");
       setSelectedTrade(null);
       fetchTrades();

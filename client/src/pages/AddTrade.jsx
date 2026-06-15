@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 const INITIAL_CHECKLIST = {
@@ -93,9 +93,7 @@ export default function AddTrade() {
 
   const fetchFundingAccounts = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/funding-accounts",
-      );
+      const response = await api.get("/funding-accounts");
       const active = response.data.filter((a) => a.isActive);
       setFundingAccounts(active);
       if (active.length > 0) {
@@ -232,7 +230,7 @@ export default function AddTrade() {
         pnl: calculated.pnl,
       };
 
-      await axios.post("http://localhost:5000/api/trades", tradeData);
+      await api.post("/trades", tradeData);
       toast.success("Trade added successfully!");
       navigate("/history");
     } catch (error) {

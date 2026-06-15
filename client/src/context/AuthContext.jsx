@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const AuthContext = createContext(null);
 
@@ -19,9 +19,9 @@ export const AuthProvider = ({ children }) => {
   // Configure axios defaults
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // Token is handled by api interceptor now
     } else {
-      delete axios.defaults.headers.common["Authorization"];
+      // No token
     }
   }, [token]);
 
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const response = await axios.get("http://localhost:5000/api/auth/me");
+        const response = await api.get("/auth/me");
         setUser(response.data);
       } catch (error) {
         console.error("Token verification failed:", error);
@@ -51,13 +51,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email,
-          password,
-        },
-      );
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
 
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem("token", newToken);
@@ -75,14 +72,11 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          name,
-          email,
-          password,
-        },
-      );
+      const response = await api.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
 
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem("token", newToken);

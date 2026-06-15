@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -86,9 +86,7 @@ export default function Dashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/analytics/dashboard",
-      );
+      const response = await api.get("/analytics/dashboard");
       setData(response.data);
     } catch {
       toast.error("Failed to load dashboard");

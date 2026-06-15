@@ -1,8 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import api from "../utils/api";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import toast from "react-hot-toast";
 
 export default function FundingAccountDetail() {
   const { id } = useParams();
@@ -15,10 +23,10 @@ export default function FundingAccountDetail() {
 
   const fetchAccountDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/funding-accounts/${id}`);
+      const response = await api.get(`/funding-accounts/${id}`);
       setData(response.data);
     } catch (error) {
-      toast.error('Failed to load account details');
+      toast.error("Failed to load account details");
     } finally {
       setLoading(false);
     }
@@ -35,14 +43,18 @@ export default function FundingAccountDetail() {
   if (!data) return null;
 
   const { account, stats } = data;
-  const profitPercent = ((account.currentBalance - account.startingBalance) / account.startingBalance) * 100;
+  const profitPercent =
+    ((account.currentBalance - account.startingBalance) /
+      account.startingBalance) *
+    100;
 
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold text-white">{account.accountName}</h1>
         <p className="text-gray-400 mt-1">
-          {account.company} • {account.phase} • ${account.accountSize.toLocaleString()}
+          {account.company} • {account.phase} • $
+          {account.accountSize.toLocaleString()}
         </p>
       </div>
 
@@ -57,7 +69,9 @@ export default function FundingAccountDetail() {
 
         <div className="stat-card">
           <div className="text-gray-400 text-sm">Profit/Loss</div>
-          <div className={`text-xl font-bold mt-2 ${profitPercent >= 0 ? 'text-profit' : 'text-loss'}`}>
+          <div
+            className={`text-xl font-bold mt-2 ${profitPercent >= 0 ? "text-profit" : "text-loss"}`}
+          >
             {profitPercent.toFixed(2)}%
           </div>
         </div>
@@ -80,35 +94,45 @@ export default function FundingAccountDetail() {
       {/* Progress Bars */}
       <div className="card space-y-4">
         <h3 className="text-lg font-semibold text-white">Challenge Progress</h3>
-        
+
         <div>
           <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-400">Profit Target ({account.profitTarget}%)</span>
-            <span className={`font-mono ${profitPercent >= 0 ? 'text-profit' : 'text-loss'}`}>
+            <span className="text-gray-400">
+              Profit Target ({account.profitTarget}%)
+            </span>
+            <span
+              className={`font-mono ${profitPercent >= 0 ? "text-profit" : "text-loss"}`}
+            >
               {profitPercent.toFixed(2)}% / {account.profitTarget}%
             </span>
           </div>
           <div className="progress-bar">
             <div
               className="progress-fill bg-gold"
-              style={{ width: `${Math.min((profitPercent / account.profitTarget) * 100, 100)}%` }}
+              style={{
+                width: `${Math.min((profitPercent / account.profitTarget) * 100, 100)}%`,
+              }}
             />
           </div>
         </div>
 
         <div>
           <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-400">Daily Loss Limit ({account.maxDailyLoss}%)</span>
+            <span className="text-gray-400">
+              Daily Loss Limit ({account.maxDailyLoss}%)
+            </span>
             <span className="text-gray-500">0% / {account.maxDailyLoss}%</span>
           </div>
           <div className="progress-bar">
-            <div className="progress-fill bg-loss" style={{ width: '0%' }} />
+            <div className="progress-fill bg-loss" style={{ width: "0%" }} />
           </div>
         </div>
 
         <div>
           <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-400">Total Loss Limit ({account.maxTotalLoss}%)</span>
+            <span className="text-gray-400">
+              Total Loss Limit ({account.maxTotalLoss}%)
+            </span>
             <span className="text-gray-500">
               {Math.abs(profitPercent).toFixed(2)}% / {account.maxTotalLoss}%
             </span>
@@ -116,13 +140,17 @@ export default function FundingAccountDetail() {
           <div className="progress-bar">
             <div
               className="progress-fill bg-loss"
-              style={{ width: `${Math.min((Math.abs(profitPercent) / account.maxTotalLoss) * 100, 100)}%` }}
+              style={{
+                width: `${Math.min((Math.abs(profitPercent) / account.maxTotalLoss) * 100, 100)}%`,
+              }}
             />
           </div>
         </div>
 
         <div className="flex justify-between text-sm">
-          <span className="text-gray-400">Min Trading Days: {account.minTradingDays}</span>
+          <span className="text-gray-400">
+            Min Trading Days: {account.minTradingDays}
+          </span>
           <span className="text-gray-400">Days Traded: {stats.daysTraded}</span>
         </div>
       </div>

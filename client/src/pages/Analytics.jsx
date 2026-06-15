@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 import {
   BarChart,
   Bar,
@@ -23,8 +23,6 @@ const COLORS = [
   "#8B5CF6",
   "#F59E0B",
 ];
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -65,12 +63,9 @@ export default function Analytics() {
   const fetchAnalytics = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-
       const [perfRes, monthlyRes] = await Promise.all([
-        axios.get(`${API_URL}/analytics/performance`, config),
-        axios.get(`${API_URL}/analytics/monthly`, config),
+        api.get("/analytics/performance"),
+        api.get("/analytics/monthly"),
       ]);
       setData(perfRes.data);
       setMonthlyData(monthlyRes.data);
@@ -84,12 +79,8 @@ export default function Analytics() {
 
   const fetchDailyData = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-
-      const response = await axios.get(
-        `${API_URL}/analytics/daily?month=${selectedMonth + 1}&year=${selectedYear}`,
-        config,
+      const response = await api.get(
+        `/analytics/daily?month=${selectedMonth + 1}&year=${selectedYear}`,
       );
       setDailyData(response.data);
     } catch (error) {

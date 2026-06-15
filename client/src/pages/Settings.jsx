@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 const containerVariants = {
@@ -59,10 +59,7 @@ export default function Settings() {
         data.newPassword = form.newPassword;
       }
 
-      const response = await axios.put(
-        "http://localhost:5000/api/settings/update",
-        data,
-      );
+      const response = await api.put("/settings/update", data);
       updateUser(response.data);
       toast.success("Settings updated successfully!");
 
